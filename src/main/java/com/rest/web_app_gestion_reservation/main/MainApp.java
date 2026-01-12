@@ -13,7 +13,6 @@ import com.rest.web_app_gestion_reservation.model.RoomType;
 import com.rest.web_app_gestion_reservation.model.User;
 import com.rest.web_app_gestion_reservation.util.JpaUtil;
 
-import java.util.List;
 
 public class MainApp extends Application {
 

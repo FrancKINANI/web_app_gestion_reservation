@@ -14,10 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.rest.web_app_gestion_reservation.main.UserDashboardController"
-            prefWidth="1100" prefHeight="700"
-            styleClass="root-pane">
+    xmlns:fx="http://javafx.com/fxml" fx:controller="com.rest.web_app_gestion_reservation.main.UserDashboardController" prefWidth="1100" prefHeight="700" styleClass="root-pane">
 
     <top>
         <HBox styleClass="app-header" alignment="CENTER_LEFT" spacing="16">
@@ -46,10 +43,24 @@
                                 <Insets top="16" right="16" bottom="16" left="16"/>
                             </padding>
                             <children>
-                                <ComboBox fx:id="roomComboBox" promptText="Choisir une salle" />
-                                <DatePicker fx:id="datePicker" promptText="Date" />
-                                <TextField fx:id="startTimeField" promptText="Heure de début (HH:mm)" />
-                                <TextField fx:id="endTimeField" promptText="Heure de fin (HH:mm)" />
+                                <Label text="Salle" styleClass="field-label" />
+                                <ComboBox fx:id="roomComboBox" promptText="Choisir une salle" maxWidth="Infinity" />
+
+                                <Label text="Date" styleClass="field-label" />
+                                <DatePicker fx:id="datePicker" promptText="Choisir une date" maxWidth="Infinity" />
+
+                                <HBox spacing="10">
+                                    <children>
+                                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                            <Label text="Début" styleClass="field-label" />
+                                            <ComboBox fx:id="startTimeComboBox" promptText="08:00" maxWidth="Infinity" />
+                                        </VBox>
+                                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                            <Label text="Fin" styleClass="field-label" />
+                                            <ComboBox fx:id="endTimeComboBox" promptText="09:00" maxWidth="Infinity" />
+                                        </VBox>
+                                    </children>
+                                </HBox>
                                 <Label fx:id="reservationErrorLabel" styleClass="error-label" text="" />
                                 <Button text="Réserver" styleClass="primary-button" onAction="#handleCreateReservation"/>
                             </children>

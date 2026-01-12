@@ -34,10 +34,10 @@ public class UserDashboardController {
     private DatePicker datePicker;
 
     @FXML
-    private TextField startTimeField;
+    private ComboBox<LocalTime> startTimeComboBox;
 
     @FXML
-    private TextField endTimeField;
+    private ComboBox<LocalTime> endTimeComboBox;
 
     @FXML
     private Label reservationErrorLabel;
@@ -83,21 +83,41 @@ public class UserDashboardController {
 
         reservationTable.setItems(reservations);
 
-        // Customize room ComboBox to show name and location
+        // Customize room ComboBox to show name and location properly
         roomComboBox.setCellFactory(lv -> new ListCell<Room>() {
             @Override
             protected void updateItem(Room item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty ? "" : item.getName() + " (" + item.getLocation() + ")");
+                if (empty || item == null) {
+                    setText("");
+                } else {
+                    String loc = item.getLocation() != null ? " (" + item.getLocation() + ")" : "";
+                    setText(item.getName() + loc);
+                }
             }
         });
         roomComboBox.setButtonCell(new ListCell<Room>() {
             @Override
             protected void updateItem(Room item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty ? "" : item.getName() + " (" + item.getLocation() + ")");
+                if (empty || item == null) {
+                    setText("");
+                } else {
+                    String loc = item.getLocation() != null ? " (" + item.getLocation() + ")" : "";
+                    setText(item.getName() + loc);
+                }
             }
         });
+
+        // Initialize time ComboBoxes
+        ObservableList<LocalTime> times = FXCollections.observableArrayList();
+        LocalTime time = LocalTime.of(7, 0);
+        while (!time.isAfter(LocalTime.of(22, 0))) {
+            times.add(time);
+            time = time.plusMinutes(30);
+        }
+        startTimeComboBox.setItems(times);
+        endTimeComboBox.setItems(times);
 
         loadRooms();
     }
@@ -144,44 +164,37 @@ public class UserDashboardController {
 
         Room room = roomComboBox.getValue();
         LocalDate date = datePicker.getValue();
-        String startStr = startTimeField.getText();
-        String endStr = endTimeField.getText();
+        LocalTime startTime = startTimeComboBox.getValue();
+        LocalTime endTime = endTimeComboBox.getValue();
 
-        if (room == null || date == null || startStr.isBlank() || endStr.isBlank()) {
+        if (room == null || date == null || startTime == null || endTime == null) {
             reservationErrorLabel.setText("Veuillez remplir tous les champs.");
             return;
         }
 
-        try {
-            LocalTime startTime = LocalTime.parse(startStr, timeFormatter);
-            LocalTime endTime = LocalTime.parse(endStr, timeFormatter);
+        if (!endTime.isAfter(startTime)) {
+            reservationErrorLabel.setText("L'heure de fin doit être après l'heure de début.");
+            return;
+        }
 
-            if (!endTime.isAfter(startTime)) {
-                reservationErrorLabel.setText("L'heure de fin doit être après l'heure de début.");
-                return;
-            }
+        LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
+        LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
 
-            LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
-            LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
-
-            Reservation res = reservationService.createReservation(currentUser.getId(), room.getId(), startDateTime,
-                    endDateTime);
-            if (res != null) {
-                loadReservations();
-                clearForm();
-            } else {
-                reservationErrorLabel.setText("Conflit de réservation ou erreur.");
-            }
-        } catch (DateTimeParseException e) {
-            reservationErrorLabel.setText("Format d'heure invalide (utiliser HH:mm).");
+        Reservation res = reservationService.createReservation(currentUser.getId(), room.getId(), startDateTime,
+                endDateTime);
+        if (res != null) {
+            loadReservations();
+            clearForm();
+        } else {
+            reservationErrorLabel.setText("Conflit de réservation ou erreur.");
         }
     }
 
     private void clearForm() {
         roomComboBox.setValue(null);
         datePicker.setValue(null);
-        startTimeField.clear();
-        endTimeField.clear();
+        startTimeComboBox.setValue(null);
+        endTimeComboBox.setValue(null);
     }
 
     @FXML
