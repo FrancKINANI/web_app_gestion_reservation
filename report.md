@@ -15,7 +15,8 @@ Le mini-projet présenté dans ce document consiste à concevoir et implémenter
 L’objectif principal est de fournir une solution permettant :
 
 - **La gestion des salles** : création, modification, suppression, typage (petite, moyenne, grande) et capacité.
-- **La gestion des réservations** : création, consultation, modification/annulation, avec vérification automatique des conflits.
+- **Gestion des réservations** : création, consultation, modification (mise à jour d'horaire ou de salle), annulation.
+- **Intelligence métier** : détection automatique des conflits et **suggestion de salles alternatives** disponibles pour le créneau demandé.
 - **La gestion des utilisateurs** : distinction entre utilisateurs simples et administrateurs.
 - **La consultation des disponibilités** en temps (quasi) réel.
 - **L’accès distribué** aux fonctionnalités de réservation via plusieurs technologies Java :
@@ -143,6 +144,7 @@ Le cœur du système repose sur un modèle de données simple mais efficace, mat
 La persistance est gérée par JPA avec Hibernate comme fournisseur. La configuration se trouve dans `src/META-INF/persistence.xml` et utilise une base de données MySQL. La propriété `hibernate.hbm2ddl.auto` est sur `update`, ce qui permet à Hibernate de mettre à jour le schéma de la base de données au démarrage de l'application.
 
 ## 4. Gestion des conflits de réservation
+- Modification de réservation avec contrôle de conflit et suggestion de salles alternatives en cas d'indisponibilité.
 
 Un point crucial dans un système de réservation est d'empêcher les doubles réservations pour une même salle sur des créneaux qui se chevauchent. Cette logique est implémentée dans la méthode `createReservation` de la classe `ReservationService`.
 

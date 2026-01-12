@@ -131,16 +131,16 @@ public class ReservationService {
     public boolean isRoomAvailable(long roomId, LocalDateTime start, LocalDateTime end, Long excludeReservationId) {
         EntityManager em = JpaUtil.getEntityManager();
         try {
-            String jpql = "SELECT COUNT(r) FROM Reservation r " +
-                    "WHERE r.room.id = :roomId " +
-                    "AND r.startDateTime < :end " +
-                    "AND r.endDateTime > :start";
+            StringBuilder jpql = new StringBuilder("SELECT COUNT(r) FROM Reservation r ")
+                    .append("WHERE r.room.id = :roomId ")
+                    .append("AND r.startDateTime < :end ")
+                    .append("AND r.endDateTime > :start");
 
             if (excludeReservationId != null) {
-                jpql += " AND r.id != :excludeId";
+                jpql.append(" AND r.id != :excludeId");
             }
 
-            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            TypedQuery<Long> query = em.createQuery(jpql.toString(), Long.class);
             query.setParameter("roomId", roomId);
             query.setParameter("start", start);
             query.setParameter("end", end);
@@ -182,6 +182,37 @@ public class ReservationService {
         }
     }
 
+    public Reservation updateReservation(long reservationId, long roomId, LocalDateTime start, LocalDateTime end) {
+        if (!isRoomAvailable(roomId, start, end, reservationId)) {
+            return null;
+        }
+
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Reservation reservation = em.find(Reservation.class, reservationId);
+            Room room = em.find(Room.class, roomId);
+            if (reservation == null || room == null) {
+                em.getTransaction().rollback();
+                return null;
+            }
+
+            reservation.setRoom(room);
+            reservation.setStartDateTime(start);
+            reservation.setEndDateTime(end);
+
+            reservation = em.merge(reservation);
+            em.getTransaction().commit();
+            return reservation;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive())
+                em.getTransaction().rollback();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
     public boolean cancelReservation(long reservationId) {
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -197,6 +228,24 @@ public class ReservationService {
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
             return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Room> findAlternativeRooms(LocalDateTime start, LocalDateTime end) {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            TypedQuery<Room> query = em.createQuery(
+                    "SELECT r FROM Room r WHERE r.id NOT IN (" +
+                            "  SELECT res.room.id FROM Reservation res " +
+                            "  WHERE res.startDateTime < :end AND res.endDateTime > :start" +
+                            ") ORDER BY r.capacity DESC",
+                    Room.class);
+            query.setParameter("start", start);
+            query.setParameter("end", end);
+            query.setMaxResults(3);
+            return query.getResultList();
         } finally {
             em.close();
         }

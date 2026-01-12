@@ -61,8 +61,14 @@
                                         </VBox>
                                     </children>
                                 </HBox>
-                                <Label fx:id="reservationErrorLabel" styleClass="error-label" text="" />
-                                <Button text="Réserver" styleClass="primary-button" onAction="#handleCreateReservation"/>
+                                <Label fx:id="reservationErrorLabel" styleClass="error-label" text="" wrapText="true" />
+                                <HBox spacing="10">
+                                    <children>
+                                        <Button fx:id="submitReservationButton" text="Réserver" styleClass="primary-button" onAction="#handleCreateReservation" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                        <Button fx:id="updateReservationButton" text="Mettre à jour" styleClass="secondary-button" onAction="#handleUpdateReservation" visible="false" managed="false" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                    </children>
+                                </HBox>
+                                <Button fx:id="cancelEditButton" text="Annuler l'édition" styleClass="secondary-button" onAction="#handleCancelEdit" visible="false" managed="false" maxWidth="Infinity"/>
                             </children>
                         </VBox>
                     </children>
@@ -85,6 +91,7 @@
                         <HBox spacing="10">
                             <children>
                                 <Button text="Actualiser" styleClass="secondary-button" onAction="#handleRefresh"/>
+                                <Button text="Éditer" styleClass="secondary-button" onAction="#handleEditSelection"/>
                                 <Button text="Annuler la réservation" styleClass="danger-button" onAction="#handleCancelReservation"/>
                             </children>
                         </HBox>

@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class UserDashboardController {
@@ -159,6 +158,17 @@ public class UserDashboardController {
     }
 
     @FXML
+    private Button submitReservationButton;
+
+    @FXML
+    private Button updateReservationButton;
+
+    @FXML
+    private Button cancelEditButton;
+
+    private Reservation selectedReservationForEdit;
+
+    @FXML
     private void handleCreateReservation() {
         reservationErrorLabel.setText("");
 
@@ -186,8 +196,84 @@ public class UserDashboardController {
             loadReservations();
             clearForm();
         } else {
-            reservationErrorLabel.setText("Conflit de réservation ou erreur.");
+            showConflictWithSuggestions(room, startDateTime, endDateTime);
         }
+    }
+
+    @FXML
+    private void handleEditSelection() {
+        Reservation res = reservationTable.getSelectionModel().getSelectedItem();
+        if (res != null) {
+            selectedReservationForEdit = res;
+            roomComboBox.setValue(res.getRoom());
+            datePicker.setValue(res.getStartDateTime().toLocalDate());
+            startTimeComboBox.setValue(res.getStartDateTime().toLocalTime());
+            endTimeComboBox.setValue(res.getEndDateTime().toLocalTime());
+
+            submitReservationButton.setVisible(false);
+            submitReservationButton.setManaged(false);
+            updateReservationButton.setVisible(true);
+            updateReservationButton.setManaged(true);
+            cancelEditButton.setVisible(true);
+            cancelEditButton.setManaged(true);
+        }
+    }
+
+    @FXML
+    private void handleUpdateReservation() {
+        if (selectedReservationForEdit == null)
+            return;
+
+        reservationErrorLabel.setText("");
+        Room room = roomComboBox.getValue();
+        LocalDate date = datePicker.getValue();
+        LocalTime startTime = startTimeComboBox.getValue();
+        LocalTime endTime = endTimeComboBox.getValue();
+
+        if (room == null || date == null || startTime == null || endTime == null) {
+            reservationErrorLabel.setText("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
+        LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
+
+        Reservation updated = reservationService.updateReservation(selectedReservationForEdit.getId(), room.getId(),
+                startDateTime, endDateTime);
+        if (updated != null) {
+            loadReservations();
+            handleCancelEdit();
+        } else {
+            showConflictWithSuggestions(room, startDateTime, endDateTime);
+        }
+    }
+
+    @FXML
+    private void handleCancelEdit() {
+        selectedReservationForEdit = null;
+        clearForm();
+        submitReservationButton.setVisible(true);
+        submitReservationButton.setManaged(true);
+        updateReservationButton.setVisible(false);
+        updateReservationButton.setManaged(false);
+        cancelEditButton.setVisible(false);
+        cancelEditButton.setManaged(false);
+    }
+
+    private void showConflictWithSuggestions(Room requestedRoom, LocalDateTime start, LocalDateTime end) {
+        List<Room> alternatives = reservationService.findAlternativeRooms(start, end);
+        StringBuilder sb = new StringBuilder("Conflit : La salle " + requestedRoom.getName() + " est déjà occupée.");
+        if (!alternatives.isEmpty()) {
+            sb.append("\nSalles disponibles pour ce créneau : ");
+            for (int i = 0; i < alternatives.size(); i++) {
+                sb.append(alternatives.get(i).getName());
+                if (i < alternatives.size() - 1)
+                    sb.append(", ");
+            }
+        } else {
+            sb.append("\nAucune autre salle disponible à cette heure.");
+        }
+        reservationErrorLabel.setText(sb.toString());
     }
 
     private void clearForm() {
