@@ -1,0 +1,28 @@
+@startuml
+title Sequence - Create Reservation (User via JavaFX)
+
+actor User
+participant "UserDashboardController" as Controller
+participant "ReservationService" as Service
+participant "JPA / EntityManager" as JPA
+database "MySQL" as DB
+
+User -> Controller : Click "Réserver"\n(fill form: room, date, start, end)
+Controller -> Controller : Validate input & parse times
+Controller -> Service : createReservation(userId, roomId, start, end)
+
+Service -> JPA : createEntityManager()\n+ begin transaction
+Service -> JPA : find(User, userId)\nfind(Room, roomId)
+Service -> JPA : SELECT COUNT(r)\nFROM Reservation r\nWHERE room AND interval overlap
+JPA -> Service : conflict count
+Service -> Service : if conflicts > 0\nrollback & return null
+
+Service -> JPA : persist(new Reservation)
+Service -> JPA : commit transaction
+Service -> JPA : close EntityManager
+
+Service --> Controller : Reservation (or null)
+Controller -> Controller : Show success or\nerror/conflict message
+
+@enduml
+

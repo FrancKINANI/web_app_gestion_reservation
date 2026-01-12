@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.rest.web_app_gestion_reservation.main.UserDashboardController"
+            prefWidth="1100" prefHeight="700"
+            styleClass="root-pane">
+
+    <top>
+        <HBox styleClass="app-header" alignment="CENTER_LEFT" spacing="16">
+            <children>
+                <Label text="Mes réservations de salles" styleClass="app-title"/>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Label fx:id="currentUserLabel" styleClass="user-label"/>
+                <Button text="Déconnexion" styleClass="secondary-button" onAction="#handleLogout"/>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <children>
+                <!-- Formulaire de réservation -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Nouvelle réservation" styleClass="section-title"/>
+
+                        <VBox spacing="10" styleClass="card">
+                            <padding>
+                                <Insets top="16" right="16" bottom="16" left="16"/>
+                            </padding>
+                            <children>
+                                <ComboBox fx:id="roomComboBox" promptText="Choisir une salle" />
+                                <DatePicker fx:id="datePicker" promptText="Date" />
+                                <TextField fx:id="startTimeField" promptText="Heure de début (HH:mm)" />
+                                <TextField fx:id="endTimeField" promptText="Heure de fin (HH:mm)" />
+                                <Label fx:id="reservationErrorLabel" styleClass="error-label" text="" />
+                                <Button text="Réserver" styleClass="primary-button" onAction="#handleCreateReservation"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+
+                <!-- Tableau des réservations -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Mes réservations" styleClass="section-title"/>
+
+                        <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS" styleClass="card">
+                            <columns>
+                                <TableColumn fx:id="colRoom" text="Salle"/>
+                                <TableColumn fx:id="colDate" text="Date"/>
+                                <TableColumn fx:id="colStart" text="Début"/>
+                                <TableColumn fx:id="colEnd" text="Fin"/>
+                            </columns>
+                        </TableView>
+
+                        <HBox spacing="10">
+                            <children>
+                                <Button text="Actualiser" styleClass="secondary-button" onAction="#handleRefresh"/>
+                                <Button text="Annuler la réservation" styleClass="danger-button" onAction="#handleCancelReservation"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </center>
+
+</BorderPane>
+

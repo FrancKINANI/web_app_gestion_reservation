@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml" fx:controller="com.rest.web_app_gestion_reservation.main.AdminDashboardController" prefWidth="1100" prefHeight="700" styleClass="root-pane">
+
+    <top>
+        <HBox styleClass="app-header" alignment="CENTER_LEFT" spacing="16">
+            <children>
+                <Label text="Administration des salles et réservations" styleClass="app-title"/>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Label fx:id="currentUserLabel" styleClass="user-label"/>
+                <Button text="Déconnexion" styleClass="secondary-button" onAction="#handleLogout"/>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <children>
+                <!-- Salles -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Salles" styleClass="section-title"/>
+
+                        <TableView fx:id="roomTable" VBox.vgrow="ALWAYS" styleClass="card">
+                            <columns>
+                                <TableColumn fx:id="colRoomName" text="Nom"/>
+                                <TableColumn fx:id="colRoomType" text="Type"/>
+                                <TableColumn fx:id="colRoomCapacity" text="Capacité"/>
+                                <TableColumn fx:id="colRoomLocation" text="Localisation"/>
+                            </columns>
+                        </TableView>
+
+                        <VBox spacing="10" styleClass="card">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                            <children>
+                                <HBox spacing="10">
+                                    <TextField fx:id="roomNameField" promptText="Nom" HBox.hgrow="ALWAYS"/>
+                                    <ComboBox fx:id="roomTypeComboBox" promptText="Type" />
+                                    <TextField fx:id="roomCapacityField" promptText="Capacité" prefWidth="80"/>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <TextField fx:id="roomLocationField" promptText="Localisation" HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <TextField fx:id="roomDescriptionField" promptText="Description" HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <HBox spacing="10" alignment="CENTER_RIGHT">
+                                    <Button text="Enregistrer" styleClass="primary-button" onAction="#handleSaveRoom"/>
+                                    <Button text="Supprimer" styleClass="danger-button" onAction="#handleDeleteRoom"/>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+
+                <!-- Réservations -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Réservations" styleClass="section-title"/>
+
+                        <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS" styleClass="card">
+                            <columns>
+                                <TableColumn fx:id="colResUser" text="Utilisateur"/>
+                                <TableColumn fx:id="colResRoom" text="Salle"/>
+                                <TableColumn fx:id="colResStart" text="Début"/>
+                                <TableColumn fx:id="colResEnd" text="Fin"/>
+                            </columns>
+                        </TableView>
+
+                        <HBox spacing="10">
+                            <children>
+                                <Button text="Actualiser" styleClass="secondary-button" onAction="#handleRefreshReservations"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </center>
+
+</BorderPane>
+

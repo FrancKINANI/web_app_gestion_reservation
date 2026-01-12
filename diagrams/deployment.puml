@@ -1,0 +1,29 @@
+@startuml
+title Deployment Diagram - Meeting Room Reservation System
+
+node "Client Machine" {
+  component "JavaFX Application\n(ui.MainApp)" as JavaFX
+  component "NotificationClient" as TcpClient
+}
+
+node "Application Server" {
+  component "REST API\n(JAX-RS)" as RestApi
+  component "SOAP Service\n(JAX-WS)" as SoapService
+  component "RMI Server" as RmiServer
+  component "NotificationServer" as TcpServer
+  component "Business Layer\nReservationService + JPA" as Biz
+}
+
+database "MySQL\n(meeting_rooms_db)" as DB
+
+JavaFX --> Biz : local calls\n(JPA in same JVM)\n(or via REST/SOAP/RMI)
+JavaFX --> RestApi : HTTP/JSON (optional)
+JavaFX --> SoapService : SOAP (optional)
+JavaFX --> RmiServer : RMI (optional)
+
+TcpClient --> TcpServer : TCP
+
+Biz --> DB : JDBC/JPA
+
+@enduml
+

@@ -1,0 +1,44 @@
+@startuml
+title Data Model - Users, Rooms, Reservations
+
+class User {
+  Long id
+  String username
+  String email
+  String password
+  String fullName
+  boolean admin
+}
+
+enum RoomType {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+class Room {
+  Long id
+  String name
+  RoomType type
+  int capacity
+  String location
+  String description
+  boolean whiteboard
+  boolean projector
+  boolean videoConference
+  boolean microphones
+  boolean presentationScreen
+}
+
+class Reservation {
+  Long id
+  LocalDateTime startDateTime
+  LocalDateTime endDateTime
+}
+
+User "1" --> "0..*" Reservation : reservations
+Room "1" --> "0..*" Reservation : reservations
+Room --> RoomType
+
+@enduml
+

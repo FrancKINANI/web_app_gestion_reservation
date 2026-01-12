@@ -1,0 +1,28 @@
+@startuml
+title UI Navigation - JavaFX Client
+
+skinparam backgroundColor #FFFFFF
+
+[*] --> Login : start application
+
+state Login {
+  [*] --> "Login Screen"
+  "Login Screen" --> "Admin Dashboard" : login as admin
+  "Login Screen" --> "User Dashboard" : login as user
+}
+
+state "Admin Dashboard" {
+  [*] --> "Rooms & Reservations View"
+  "Rooms & Reservations View" --> [*]
+}
+
+state "User Dashboard" {
+  [*] --> "My Reservations View"
+  "My Reservations View" --> [*]
+}
+
+"Admin Dashboard" --> Login : logout
+"User Dashboard" --> Login : logout
+
+@enduml
+

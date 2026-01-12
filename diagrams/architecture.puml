@@ -1,0 +1,35 @@
+@startuml
+title Global Architecture - Meeting Room Reservation System
+
+skinparam componentStyle rectangle
+
+package "Client Side" {
+  [JavaFX Client] as JavaFX
+  [REST Client] as RestClient
+  [SOAP Client] as SoapClient
+  [RMI Client] as RmiClient
+  [TCP Notification Client] as TcpClient
+}
+
+package "Application Server" {
+  component "REST API\n(JAX-RS)" as RestApi
+  component "SOAP Service\n(JAX-WS)" as SoapService
+  component "RMI Server" as RmiServer
+  component "TCP Notification\nServer" as TcpServer
+  component "Business Layer\nReservationService" as Biz
+  database "MySQL\n(meeting_rooms_db)" as DB
+}
+
+JavaFX --> Biz : Local calls\n(JPA in same JVM)
+RestClient --> RestApi : HTTP/JSON
+SoapClient --> SoapService : SOAP/WSDL
+RmiClient --> RmiServer : RMI
+TcpClient --> TcpServer : TCP
+
+RestApi --> Biz
+SoapService --> Biz
+RmiServer --> Biz
+Biz --> DB : JPA/Hibernate
+
+@enduml
+
