@@ -1,4 +1,4 @@
-package com.rest.web_app_gestion_reservation.main;
+package com.rest.web_app_gestion_reservation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
