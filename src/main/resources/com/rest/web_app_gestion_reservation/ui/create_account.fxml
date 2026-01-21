@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml" fx:controller="com.rest.web_app_gestion_reservation.main.CreateAccountController" prefWidth="900" prefHeight="600" styleClass="root-pane">
+    xmlns:fx="http://javafx.com/fxml" fx:controller="com.rest.web_app_gestion_reservation.controller.CreateAccountController" prefWidth="900" prefHeight="600" styleClass="root-pane">
 
     <top>
         <HBox alignment="CENTER_LEFT" styleClass="app-header">

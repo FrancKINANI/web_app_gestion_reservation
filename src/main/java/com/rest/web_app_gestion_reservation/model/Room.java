@@ -1,10 +1,13 @@
 package com.rest.web_app_gestion_reservation.model;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "rooms")
-public class Room {
+public class Room implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -140,5 +143,9 @@ public class Room {
     @Override
     public String toString() {
         return name;
+    }
+
+    public void setId(long roomId) {
+        this.id = roomId;
     }
 }

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml" fx:controller="com.rest.web_app_gestion_reservation.main.AdminDashboardController" prefWidth="1100" prefHeight="700" styleClass="root-pane">
+    xmlns:fx="http://javafx.com/fxml" fx:controller="com.rest.web_app_gestion_reservation.controller.AdminDashboardController" prefWidth="1100" prefHeight="700" styleClass="root-pane">
 
     <top>
         <HBox styleClass="app-header" alignment="CENTER_LEFT" spacing="16">
@@ -87,7 +87,7 @@
 
                         <HBox spacing="10">
                             <children>
-                                <Button text="Actualiser" styleClass="secondary-button" onAction="#handleRefreshReservations"/>
+                                <Button text="Actualiser" styleClass="secondary-button" onAction="#handleRefreshAll"/>
                             </children>
                         </HBox>
                     </children>
@@ -97,4 +97,3 @@
     </center>
 
 </BorderPane>
-

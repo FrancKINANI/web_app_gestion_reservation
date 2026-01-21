@@ -1,62 +1,54 @@
 ## Quickstart
 
-This document explains how to run the main components of the meeting room reservation system.
+Ce document explique comment lancer rapidement le système de réservation de salles.
 
-### 1. Prerequisites
+### 1. Prérequis
 
-- JDK 17+ (or the version required by your JavaFX/Jakarta stack).
-- MySQL server running locally.
-- A JPA/Jakarta-compatible driver for MySQL (`com.mysql.cj.jdbc.Driver`) on the classpath.
+- **JDK 17+**
+- **Maven**
+- **MySQL** : Le serveur doit être accessible. La configuration se trouve dans `src/main/resources/META-INF/persistence.xml`.
 
-### 2. Database Setup
+### 2. Lancement (2 Étapes)
 
-1. Create a MySQL user and database (example):
+La nouvelle architecture unifie le démarrage de tous les services backend.
 
-```sql
-CREATE DATABASE meeting_rooms_db CHARACTER SET utf8mb4;
-CREATE USER 'root'@'localhost' IDENTIFIED BY 'root';
-GRANT ALL PRIVILEGES ON meeting_rooms_db.* TO 'root'@'localhost';
-FLUSH PRIVILEGES;
+#### Étape 1 : Lancer le Backend
+
+Dans votre IDE, trouvez et exécutez la méthode `main` de la classe :
+`com.rest.web_app_gestion_reservation.BackendServer`
+
+Attendez que la console affiche `--- All Backend Services are running ---`. Cela signifie que les serveurs REST, SOAP, RMI et de notification sont tous démarrés et prêts.
+
+#### Étape 2 : Lancer le Client JavaFX
+
+Dans un terminal, à la racine du projet, exécutez :
+
+```bash
+# 1. Construire le "fat jar" qui contient tout ce qu'il faut
+mvn clean package
+
+# 2. Lancer le client
+java -jar target/web_app_gestion_reservation-1.0-SNAPSHOT.jar
 ```
 
-2. In `src/META-INF/persistence.xml`, adjust:
+L'interface graphique va se lancer. Vous pouvez vous connecter avec le compte admin par défaut (`admin`/`admin`) ou créer un nouveau compte.
 
-- `jakarta.persistence.jdbc.url`
-- `jakarta.persistence.jdbc.user`
-- `jakarta.persistence.jdbc.password`
+### 3. Endpoints des Services (Pour Information)
 
-to match your environment.
+Le `BackendServer` expose les services suivants :
 
-On first run, Hibernate will create/update the schema automatically.
+-   **REST (JAX-RS)** @ `http://localhost:8080/api`
+    -   `GET /rooms` : Liste toutes les salles.
+    -   `POST /rooms` : Crée une salle.
+    -   `GET /reservations` : Liste toutes les réservations.
+    -   `POST /reservations` : Crée une réservation.
+    -   ...et d'autres.
 
-### 3. Running the JavaFX Client
+-   **SOAP (JAX-WS)** @ `http://localhost:8081/soap/reservation?wsdl`
+    -   Expose les méthodes `authenticate` et `registerUser`.
 
-1. Ensure JavaFX is configured in your IDE / run configuration.
-2. Run the main class:
-   - `com.rest.web_app_gestion_reservation.main.MainApp`
+-   **RMI (Java RMI)** sur le port `1099`
+    -   Expose le service `ReservationRmiService` pour la logique métier du client.
 
-3. On first launch:
-   - An **admin user** (`admin` / `admin`) is created automatically.
-
-4. Account Creation:
-   - Users can now create their own accounts via the "Créer un compte" link on the login screen.
-   - All users must provide an **email**, a name, and a username.
-
-### 4. Running Distributed Services
-
-#### 4.1 REST API (JAX-RS)
-Deploy to a Jakarta EE server (context: `web_app_gestion_reservation`).
-- `GET http://localhost:8080/web_app_gestion_reservation/api/reservations/user/{id}`
-- `DELETE http://localhost:8080/web_app_gestion_reservation/api/reservations/{id}`
-
-#### 4.2 SOAP Service
-- Run: `com.rest.web_app_gestion_reservation.service.soap.SoapPublisher`
-- URL: `http://localhost:8081/soap/reservation`
-
-#### 4.3 RMI Server
-- Run: `com.rest.web_app_gestion_reservation.service.rmi.RmiServer`
-
-#### 4.4 TCP Notifications
-- Server: `com.rest.web_app_gestion_reservation.service.socket.NotificationServer`
-- Client: `com.rest.web_app_gestion_reservation.service.socket.NotificationClient`
-
+-   **Sockets (TCP)** sur le port `8082`
+    -   Le serveur de notification auquel les clients se connectent pour recevoir les messages en temps réel.

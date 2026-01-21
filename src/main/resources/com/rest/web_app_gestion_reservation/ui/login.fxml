@@ -11,7 +11,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.rest.web_app_gestion_reservation.main.LoginController"
+            fx:controller="com.rest.web_app_gestion_reservation.controller.LoginController"
             prefWidth="900" prefHeight="600"
             styleClass="root-pane">
 
@@ -57,4 +57,3 @@
     </center>
 
 </BorderPane>
-

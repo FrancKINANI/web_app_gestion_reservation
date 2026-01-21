@@ -1,5 +1,6 @@
 package com.rest.web_app_gestion_reservation.controller;
 
+import com.rest.web_app_gestion_reservation.service.client.SoapServiceClient;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +11,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import com.rest.web_app_gestion_reservation.model.User;
-import com.rest.web_app_gestion_reservation.service.ReservationService;
 
 public class LoginController {
 
@@ -23,7 +23,12 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
-    private final ReservationService reservationService = new ReservationService();
+    private SoapServiceClient soapServiceClient;
+
+    @FXML
+    public void initialize() {
+        this.soapServiceClient = new SoapServiceClient();
+    }
 
     @FXML
     private void handleLogin(ActionEvent event) {
@@ -35,11 +40,11 @@ public class LoginController {
             return;
         }
 
-        User user = reservationService.authenticate(username, password);
+        User user = soapServiceClient.authenticate(username, password);
         if (user != null) {
             openDashboard(user);
         } else {
-            errorLabel.setText("Identifiants incorrects.");
+            errorLabel.setText("Identifiants incorrects ou service indisponible.");
         }
     }
 
@@ -64,6 +69,7 @@ public class LoginController {
                     .getResource("/com/rest/web_app_gestion_reservation/ui/style/style.css").toExternalForm());
             stage.setScene(scene);
         } catch (Exception e) {
+            e.printStackTrace();
             errorLabel.setText("Erreur lors du chargement du tableau de bord.");
         }
     }
@@ -81,6 +87,7 @@ public class LoginController {
                     .getResource("/com/rest/web_app_gestion_reservation/ui/style/style.css").toExternalForm());
             stage.setScene(scene);
         } catch (Exception e) {
+            e.printStackTrace();
             errorLabel.setText("Erreur lors du chargement de la page de création de compte.");
         }
     }

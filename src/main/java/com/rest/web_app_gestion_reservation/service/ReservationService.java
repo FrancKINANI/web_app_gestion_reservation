@@ -103,6 +103,15 @@ public class ReservationService {
 
     // --- Reservation Management ---
 
+    public Reservation findReservationById(long reservationId) {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            return em.find(Reservation.class, reservationId);
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Reservation> listAllReservations() {
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -119,7 +128,7 @@ public class ReservationService {
         EntityManager em = JpaUtil.getEntityManager();
         try {
             TypedQuery<Reservation> query = em.createQuery(
-                    "SELECT r FROM Reservation r JOIN FETCH r.room WHERE r.user.id = :userId ORDER BY r.startDateTime DESC",
+                    "SELECT r FROM Reservation r WHERE r.user.id = :userId ORDER BY r.startDateTime DESC",
                     Reservation.class);
             query.setParameter("userId", userId);
             return query.getResultList();

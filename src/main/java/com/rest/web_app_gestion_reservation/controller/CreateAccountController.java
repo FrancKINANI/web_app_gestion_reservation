@@ -1,5 +1,6 @@
 package com.rest.web_app_gestion_reservation.controller;
 
+import com.rest.web_app_gestion_reservation.service.client.SoapServiceClient;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +11,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import com.rest.web_app_gestion_reservation.model.User;
-import com.rest.web_app_gestion_reservation.service.ReservationService;
 
 import java.io.IOException;
 
@@ -34,8 +34,13 @@ public class CreateAccountController {
     @FXML
     private Label errorLabel;
 
-    private final ReservationService reservationService = new ReservationService();
+    private SoapServiceClient soapServiceClient;
 
+    @FXML
+    public void initialize() {
+        this.soapServiceClient = new SoapServiceClient();
+    }
+    
     @FXML
     private void handleCreateAccount(ActionEvent event) {
         String username = usernameField.getText();
@@ -56,12 +61,13 @@ public class CreateAccountController {
             return;
         }
 
-        User user = reservationService.registerUser(username, email, password, fullName, false);
+        // IMPORTANT: The SoapPublisher must be running for this to work.
+        User user = soapServiceClient.registerUser(username, email, password, fullName, false);
         if (user != null) {
             handleBackToLogin(event);
         } else {
             errorLabel
-                    .setText("Erreur lors de la création du compte (l'utilisateur ou l'email existe peut-être déjà).");
+                    .setText("Erreur: L'utilisateur ou l'email existe peut-être déjà, ou le service est indisponible.");
         }
     }
 
@@ -78,6 +84,7 @@ public class CreateAccountController {
                     .getResource("/com/rest/web_app_gestion_reservation/ui/style/style.css").toExternalForm());
             stage.setScene(scene);
         } catch (IOException e) {
+            e.printStackTrace();
             errorLabel.setText("Erreur lors du chargement de la page de connexion.");
         }
     }

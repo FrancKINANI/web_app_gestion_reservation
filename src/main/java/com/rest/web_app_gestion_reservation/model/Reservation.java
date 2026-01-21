@@ -1,21 +1,23 @@
 package com.rest.web_app_gestion_reservation.model;
 
 import jakarta.persistence.*;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reservations")
-public class Reservation {
+public class Reservation implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER) // Changed to EAGER
     private User user;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER) // Changed to EAGER
     private Room room;
 
     @Column(nullable = false)
@@ -33,6 +35,8 @@ public class Reservation {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }
+
+    // Getters and setters...
 
     public Long getId() {
         return id;
@@ -70,4 +74,3 @@ public class Reservation {
         this.endDateTime = endDateTime;
     }
 }
-
